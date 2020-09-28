@@ -198,7 +198,90 @@
 -- SECTION 12: ONE TO MANY START
 -- **************************************************
 
-CREATE TABLE
+-- CREATE TABLE students(
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--      first_name VARCHAR(100)
+--     );
+
+-- INSERT INTO students(first_name) VALUES
+--     ('Caleb'), ('Samantha'), ('Raj'), ('Carlos'), ('Lisa');
+
+-- CREATE TABLE papers(
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     title VARCHAR(500),
+--     grade FLOAT,
+--     student_id INT,
+--     FOREIGN KEY(student_id)
+--         REFERENCES students(id)
+--         ON DELETE CASCADE
+-- );
+
+-- INSERT INTO papers(student_id, title, grade) VALUES
+--     (1, 'My First Book Report', 60),
+--     (1, 'My Second Book Report', 75),
+--     (2, 'Russina Lit Through The Ages', 94),
+--     (2, 'De Montaigne and The Art of The Essay', 98),
+--     (4, 'Borges and Magical Realism', 89);
+
+
+-- SHOW ALL STUDENTS THAT HAVE GRADES
+-- SELECT first_name, title, grade FROM papers
+--     INNER JOIN students
+--         ON students.id = papers.student_id
+--     ORDER BY grade DESC;
+
+-- SHOW ALL STUDENTS THAT HAVE GRADES ALTERNATE
+-- CAN BE A RIGHT JOIN AS ALL PAPERS HAVE A STUDENT_ID
+-- SELECT first_name, title, grade FROM papers
+    -- RIGHT JOIN students
+--         ON students.id = papers.student_id
+--     ORDER BY grade DESC;
+
+
+-- SHOW ALL STUDENTS AND THEIR GRADES
+-- SELECT first_name, title, grade FROM students
+--     LEFT JOIN papers
+--         ON students.id = papers.student_id;
+
+
+-- SHOW ALL STUDENTS WITH THEIR GRADES FOR ALL THEIR WORK 
+-- IF SOME STUDENTS DONT HAVE WORK OR A GRADE SUBSTITUTE 
+-- THE NULL WITH Missing or 0
+-- SELECT 
+--     first_name, 
+--     IFNULL(title, 'Missing') AS title,
+--     IFNULL(grade, 0) AS grade
+-- FROM students
+--     LEFT JOIN papers
+--         ON students.id = papers.student_id;
+
+
+-- SHOW AVERAGE GRADE FOR ALL STUDENTS
+-- SELECT
+--     first_name,
+--     IFNULL(AVG(grade), 0) AS average
+-- FROM students
+--     LEFT JOIN papers
+--         ON students.id = papers.student_id
+--     GROUP BY students.id
+--     ORDER BY average DESC;
+
+
+-- SHOW AVERAGE GRADE FOR ALL STUDENTS AND
+-- SHOW PASSING IF OVER 75 AND FAILING IF NOT
+SELECT
+    first_name,
+    IFNULL(AVG(grade), 0) AS average,
+    CASE
+        WHEN AVG(grade) IS NULL THEN 'FAILING'
+        WHEN AVG(grade) >= 75 THEN 'PASSING'
+        ELSE 'FAILING'
+    END AS passing_status
+FROM students
+    LEFT JOIN papers
+        ON students.id = papers.student_id
+    GROUP BY first_name
+    ORDER BY average DESC;
 
 -- **************************************************
 -- SECTION 12: ONE TO MANY END
